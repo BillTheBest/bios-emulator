@@ -1,0 +1,59 @@
+                             SCC BIOS Emulator
+Copyright (C) 2011, Jan-Arne Sobania <jan-arne.sobania@hpi.uni-potsdam.de>
+Hasso Plattner Institute for Software Systems Engineering, Potsdam, Germany
+
+************
+* Overview
+
+This is a minimal BIOS stub for the Intel Single-chip Cloud Computer (SCC),
+intended to ease porting startup code of operating system kernels (especially
+the Linux kernel). It currently implements a minimal set of BIOS interrupts that
+should be sufficient to allow booting an SCC-capable Linux kernel without
+changes to the real-mode startup code.
+
+The BIOS emulator supports single-core operation only -- i.e., it does not
+provide a Single System Image view, but runs an isolated instance on each core.
+Furthermore, it is supposed to be used with the regular sccKit tools like sccGui
+or sccBoot. It does not support self-boot and does not contain bootstrap code,
+just passive implementations of BIOS interrupts.
+
+
+*****************
+* Configuration
+
+* Private Memory Size:SCCBIOS_QUERY_MEMSIZE_FROM_FPGA,SCCBIOS_DEFAULT_MEMSIZE_MB
+  The PRIVATE MEMORY SIZE is reported via the E820 memory map. By default, this
+  size is read from the FPGA's GRB space, which is accessible under the default
+  LUT configuration at 0xF9008244 ("Private memory slots").
+  By commenting out the line #define-ning SCCBIOS_QUERY_MEMSIZE_FROM_FPGA, a
+  default of SCCBIOS_DEFAULT_MEMSIZE_MB (in Megabytes) is used.
+
+
+Upon starting, configuration information can be displayed on a serial terminal
+connected to COM1 (I/O port 0x3f8). This is controlled via the following macros
+(which be disabled/enabled by commenting/uncommenting the appropriate lines in
+the source file):
+
+(Disabled by default)
+* SCCBIOS_TRACE_INT15_CALLS
+  Output a message for each invocation of INT15.
+
+(Enabled by default)
+* SCCBIOS_PRINT_BANNER
+  Display banner message.
+
+* SCCBIOS_PRINT_FREQUENCY_FROM_FPGA
+  Read and display tile frequency. This requires the FASTCLOCK register
+  (0xF9008230) to be set correctly.
+
+* SCCBIOS_PRINT_TILEID
+  Display TILEID value.
+
+* SCCBIOS_PRINT_MEMSIZE
+  Display configured size of private memory.
+
+Serial output has been tested with both the UART simulation in sccGui (stock
+crbif) and a modified crbif that included the UART automatons. Please note that,
+if no UART emulation is active on the MCPC, sccGui will display a warning about
+an unexpected NCIOWR packet for each character written to the non-existent COM
+port.
