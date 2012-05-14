@@ -697,7 +697,8 @@ INT_15_e820:	// function ax=0xe820: query memory map
 	/* Get the amount of available local memory and initialize the E820 map */
 #ifdef SCCBIOS_QUERY_MEMSIZE_FROM_FPGA
 	movl	$0xF9008244, %eax
-	movzxb	%fs:(%eax), %eax	/* GRB:0x8244: Private Memory Slots */
+	movl	%fs:(%eax), %eax	/* GRB:0x8244: Private Memory Slots */
+	andb	$0xFF, %al
 
 	cmpl	$40, %eax		/* Never use more than 40 slots */
 	jle	1f
