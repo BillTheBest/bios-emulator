@@ -700,9 +700,9 @@ INT_15_e820:	// function ax=0xe820: query memory map
 	movl	%fs:(%eax), %eax	/* GRB:0x8244: Private Memory Slots */
 	andb	$0xFF, %al
 
-	cmpl	$40, %eax		/* Never use more than 40 slots */
+	cmpl	$41, %eax		/* Never use more than 41 slots */
 	jle	1f
-	movl	$40, %eax
+	movl	$41, %eax
 1:
 	cmpl	$4, %eax		/* Never use less than 4 slots */
 	jge	2f
