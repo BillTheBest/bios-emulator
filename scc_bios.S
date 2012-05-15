@@ -709,6 +709,21 @@ INT_15_e820:	// function ax=0xe820: query memory map
 2:
 
 	shll	$24, %eax
+
+	/* Substract Videobuffersize from local memory */
+	movl	$0xF9008238, %ecx
+	movl	%fs:(%ecx), %edx	/* GRB:0x8238: Video resolution X */
+	movl	$0xF900823c, %ecx
+	movl	%fs:(%ecx), %ecx	/* GRB:0x823c: Video resolution Y */
+	imul	%ecx, %edx
+	movl	$0xF9008240, %ecx
+	movl	%fs:(%ecx), %ecx	/* GRB:0x8240: Video resolution Color depth */
+	imul    %ecx, %edx
+	shr     $2, %edx
+	add     $0x1000, %edx
+	add     $0xfffff, %edx   /* round-up... */
+	and     $~0xfffff, %edx  /* ...to 0x100000 (MB) */
+	sub     %edx, %eax
 #else
 	movl	$1024*1024*SCCBIOS_DEFAULT_MEMSIZE_MB, %eax	/* Use the default amount */
 #endif
