@@ -699,11 +699,9 @@ INT_15_e820:	// function ax=0xe820: query memory map
 #ifdef SCCBIOS_QUERY_MEMSIZE_FROM_FPGA
 	movl	$0xF9008244, %eax
 	movl	%fs:(%eax), %eax	/* GRB:0x8244: Private Memory Slots */
-	andb	$0xFF, %al
-
-	cmpl	$41, %eax		/* Never use more than 41 slots */
+	cmpl	$128, %eax		/* Never use more than 128 slots */
 	jle	1f
-	movl	$41, %eax
+	movl	$128, %eax
 1:
 	cmpl	$4, %eax		/* Never use less than 4 slots */
 	jge	2f
