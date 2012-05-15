@@ -27,7 +27,7 @@
 #define SCCBIOS_DEFAULT_MEMSIZE_MB		512
 
 /* Print information as the bootloader invokes BIOS interrupts */
-//#define SCCBIOS_TRACE_INT15_CALLS
+/* #define SCCBIOS_TRACE_INT15_CALLS */
 
 /* Print BIOS banner message on boot */
 #define SCCBIOS_PRINT_BANNER
@@ -694,7 +694,8 @@ INT_15_e820:	// function ax=0xe820: query memory map
 	call	uart_put_crlf
 #endif
 
-	/* Get the amount of available local memory and initialize the E820 map */
+	/* Get the amount of available local memory */
+
 #ifdef SCCBIOS_QUERY_MEMSIZE_FROM_FPGA
 	movl	$0xF9008244, %eax
 	movl	%fs:(%eax), %eax	/* GRB:0x8244: Private Memory Slots */
@@ -725,6 +726,7 @@ INT_15_e820:	// function ax=0xe820: query memory map
 	call	uart_put_u32
 	call	uart_put_crlf
 #endif
+	/* initialize the E820 map */
 
 	subl	(e820_map+5*4+0), %eax
 	movl	%eax, (e820_map+7*4)
